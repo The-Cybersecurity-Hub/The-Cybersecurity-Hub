@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🔐 The Cybersecurity Hub – Open-Source Tool Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#0078D4;--blue-dark:#005a9e;--blue-light:#E5F1FB;--navy:#2B579A;
+  --bg:#F3F2F1;--white:#fff;--text:#323130;--grey:#605e5c;
+  --green:#107C10;--orange:#D83B01;--border:#c8c6c4;
+  --shadow:0 2px 12px rgba(0,120,212,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);}
+.site-nav{background:var(--navy);padding:0 24px;display:flex;align-items:center;
+  position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.brand{font-family:'Space Mono',monospace;font-size:.95rem;font-weight:700;
+  color:#fff;text-decoration:none;padding:16px 20px 16px 0;letter-spacing:.04em;
+  border-right:1px solid rgba(255,255,255,.2);margin-right:12px;white-space:nowrap;}
+.nav-scroll{display:flex;overflow-x:auto;gap:0;scrollbar-width:none;}
+.nav-scroll::-webkit-scrollbar{display:none;}
+.nav-scroll a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.75rem;
+  font-weight:600;padding:16px 11px;white-space:nowrap;transition:all .2s;letter-spacing:.03em;}
+.nav-scroll a:hover{color:#fff;background:rgba(255,255,255,.1);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 60%,#40a9f3 100%);
+  color:#fff;padding:56px 32px 44px;text-align:center;position:relative;overflow:hidden;}
+.hero h1{font-family:'Space Mono',monospace;font-size:clamp(1.6rem,4vw,2.8rem);
+  font-weight:700;letter-spacing:-.02em;position:relative;}
+.hero p{font-size:1rem;opacity:.88;margin-top:10px;position:relative;}
+.hero-stats{display:flex;justify-content:center;gap:36px;margin-top:28px;position:relative;}
+.stat{text-align:center;}
+.stat-num{font-family:'Space Mono',monospace;font-size:1.9rem;font-weight:700;display:block;}
+.stat-label{font-size:.72rem;opacity:.78;letter-spacing:.07em;text-transform:uppercase;}
+.page{display:none;}
+.page.active{display:block;}
+.section{padding:40px 32px;max-width:1400px;margin:0 auto;}
+.section-title{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:20px;
+  padding-bottom:8px;border-bottom:2px solid var(--blue-light);}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+.tile{background:var(--white);border:1.5px solid var(--border);border-radius:10px;
+  padding:20px 14px 16px;text-align:center;text-decoration:none;color:var(--navy);
+  font-weight:700;font-size:.84rem;transition:all .22s;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;}
+.tile:hover{background:var(--blue);color:#fff;border-color:var(--blue);
+  transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,120,212,.22);}
+.tile-icon{font-size:1.7rem;}
+.tile-count{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--grey);font-weight:400;}
+.tile:hover .tile-count{color:rgba(255,255,255,.75);}
+.page-hero{background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;padding:40px 32px 32px;}
+.page-hero h1{font-family:'Space Mono',monospace;font-size:1.7rem;font-weight:700;}
+.page-hero p{margin-top:8px;opacity:.85;font-size:.92rem;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.75);
+  background:none;border:none;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;
+  letter-spacing:.05em;margin-bottom:14px;cursor:pointer;transition:color .2s;padding:0;}
+.back-btn:hover{color:#fff;}
+.sub-section{margin-bottom:36px;}
+.sub-title{font-family:'Space Mono',monospace;font-size:.69rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;
+  padding:9px 0 9px 14px;border-left:3px solid var(--blue);
+  background:var(--blue-light);border-radius:0 6px 6px 0;}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.tool-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;
+  padding:18px;box-shadow:var(--shadow);transition:all .2s;display:flex;flex-direction:column;gap:7px;}
+.tool-card:hover{border-color:var(--blue);transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,120,212,.14);}
+.tool-card h3{font-size:.95rem;font-weight:700;color:var(--navy);}
+.tool-card p{font-size:.82rem;color:var(--grey);line-height:1.5;flex:1;}
+.tool-footer{display:flex;align-items:center;gap:7px;margin-top:4px;flex-wrap:wrap;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 7px;border-radius:4px;font-weight:700;}
+.b-mit{background:#dff6dd;color:#107C10;}
+.b-apache{background:#fff4ce;color:#7a5800;}
+.b-gpl{background:#fde7e9;color:#a4000f;}
+.b-agpl{background:#ede7f6;color:#4a148c;}
+.b-other{background:var(--blue-light);color:var(--navy);}
+.btn-gh{margin-left:auto;font-family:'Space Mono',monospace;font-size:.67rem;font-weight:700;
+  color:var(--blue);text-decoration:none;border:1.5px solid var(--blue);padding:4px 9px;
+  border-radius:4px;transition:all .18s;white-space:nowrap;}
+.btn-gh:hover{background:var(--blue);color:#fff;}
+footer{background:var(--navy);color:rgba(255,255,255,.7);text-align:center;
+  padding:24px;font-size:.8rem;margin-top:48px;}
+footer a{color:rgba(255,255,255,.9);}
+@media(max-width:600px){
+  .hero{padding:36px 18px;}
+  .section{padding:28px 16px;}
+  .page-hero{padding:28px 16px;}
+  .tile-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  .tool-grid{grid-template-columns:1fr;}
+  .hero-stats{gap:20px;}
+}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="#" onclick="showHome()">🔐 CyberHub</a>
+  <div class="nav-scroll">
+    <a href="#" onclick="showPage('threat-intelligence')">Threat Intel</a>
+    <a href="#" onclick="showPage('siem')">SIEM</a>
+    <a href="#" onclick="showPage('soar')">SOAR</a>
+    <a href="#" onclick="showPage('network-security')">Network</a>
+    <a href="#" onclick="showPage('cloud-security')">Cloud</a>
+    <a href="#" onclick="showPage('identity-access')">IAM</a>
+    <a href="#" onclick="showPage('incident-response')">IR</a>
+    <a href="#" onclick="showPage('vulnerability-management')">Vuln Mgmt</a>
+    <a href="#" onclick="showPage('devsecops')">DevSecOps</a>
+    <a href="#" onclick="showPage('endpoint-security')">Endpoint</a>
+    <a href="#" onclick="showPage('ai-security')">AI Security</a>
+    <a href="#" onclick="showPage('blue-teaming')">Blue Team</a>
+    <a href="#" onclick="showPage('osint')">OSINT</a>
+    <a href="#" onclick="showPage('red-teaming')">Red Team</a>
+    <a href="#" onclick="showPage('grc')">GRC</a>
+  </div>
+</nav>
+<div id="home" class="page active">
+  <div class="hero">
+    <h1>🔐 The Cybersecurity Hub</h1>
+    <p>Your open-source gateway to 30+ cybersecurity domains — curated tools, free forever</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">30+</span><span class="stat-label">Domains</span></div>
+      <div class="stat"><span class="stat-num">90+</span><span class="stat-label">Tools</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Open Source</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Browse All Domains</div>
+    <div class="tile-grid">
+      <div class="tile" onclick="showPage('security-awareness')"><div class="tile-icon">🎓</div>Security Awareness<div class="tile-count">Training & Education</div></div>
+      <div class="tile" onclick="showPage('soar')"><div class="tile-icon">⚙️</div>SOAR<div class="tile-count">Operations</div></div>
+      <div class="tile" onclick="showPage('sspm')"><div class="tile-icon">📦</div>SSPM<div class="tile-count">Cloud & SaaS</div></div>
+      <div class="tile" onclick="showPage('web-security')"><div class="tile-icon">🌐</div>Web Security<div class="tile-count">Application Security</div></div>
+      <div class="tile" onclick="showPage('api-security')"><div class="tile-icon">🔌</div>API Security<div class="tile-count">Application Security</div></div>
+      <div class="tile" onclick="showPage('zero-trust')"><div class="tile-icon">🧭</div>Zero Trust<div class="tile-count">Network & Access</div></div>
+      <div class="tile" onclick="showPage('endpoint-security')"><div class="tile-icon">💻</div>Endpoint Security<div class="tile-count">Endpoint & Device</div></div>
+      <div class="tile" onclick="showPage('data-governance')"><div class="tile-icon">🗂️</div>Data Governance<div class="tile-count">Data & Privacy</div></div>
+      <div class="tile" onclick="showPage('mobile-security')"><div class="tile-icon">📱</div>Mobile Security<div class="tile-count">Endpoint & Device</div></div>
+      <div class="tile" onclick="showPage('security-analytics')"><div class="tile-icon">📊</div>Security Analytics<div class="tile-count">Analytics & AI</div></div>
+      <div class="tile" onclick="showPage('devsecops')"><div class="tile-icon">🔧</div>DevSecOps<div class="tile-count">Development Security</div></div>
+      <div class="tile" onclick="showPage('security-testing')"><div class="tile-icon">🧪</div>Security Testing<div class="tile-count">Offensive Security</div></div>
+      <div class="tile" onclick="showPage('blue-teaming')"><div class="tile-icon">🛡️</div>Blue Teaming<div class="tile-count">Defensive Security</div></div>
+      <div class="tile" onclick="showPage('osint')"><div class="tile-icon">🕵️</div>OSINT<div class="tile-count">Intelligence</div></div>
+      <div class="tile" onclick="showPage('governance-dashboard')"><div class="tile-icon">📋</div>Governance Dashboard<div class="tile-count">GRC</div></div>
+      <div class="tile" onclick="showPage('security-compliance')"><div class="tile-icon">✅</div>Security Compliance<div class="tile-count">GRC</div></div>
+      <div class="tile" onclick="showPage('training-labs')"><div class="tile-icon">🏋️</div>Training Labs<div class="tile-count">Training & Education</div></div>
+      <div class="tile" onclick="showPage('threat-intelligence')"><div class="tile-icon">🧠</div>Threat Intelligence<div class="tile-count">Intelligence</div></div>
+      <div class="tile" onclick="showPage('risk-management')"><div class="tile-icon">⚖️</div>Risk Management<div class="tile-count">GRC</div></div>
+      <div class="tile" onclick="showPage('cloud-security')"><div class="tile-icon">☁️</div>Cloud Security<div class="tile-count">Cloud & SaaS</div></div>
+      <div class="tile" onclick="showPage('network-security')"><div class="tile-icon">🌐</div>Network Security<div class="tile-count">Network & Access</div></div>
+      <div class="tile" onclick="showPage('identity-access')"><div class="tile-icon">👤</div>Identity & Access<div class="tile-count">Network & Access</div></div>
+      <div class="tile" onclick="showPage('incident-response')"><div class="tile-icon">🚨</div>Incident Response<div class="tile-count">Operations</div></div>
+      <div class="tile" onclick="showPage('vulnerability-management')"><div class="tile-icon">🛠️</div>Vulnerability Management<div class="tile-count">Dev Security</div></div>
+      <div class="tile" onclick="showPage('siem')"><div class="tile-icon">👁️</div>Security Monitoring<div class="tile-count">Operations</div></div>
+      <div class="tile" onclick="showPage('privacy-tools')"><div class="tile-icon">🔒</div>Privacy Tools<div class="tile-count">Data & Privacy</div></div>
+      <div class="tile" onclick="showPage('ai-security')"><div class="tile-icon">🤖</div>AI Security<div class="tile-count">Analytics & AI</div></div>
+      <div class="tile" onclick="showPage('digital-forensics')"><div class="tile-icon">🔍</div>Digital Forensics<div class="tile-count">Operations</div></div>
+      <div class="tile" onclick="showPage('red-teaming')"><div class="tile-icon">🔴</div>Red Teaming<div class="tile-count">Offensive Security</div></div>
+      <div class="tile" onclick="showPage('grc')"><div class="tile-icon">📜</div>GRC<div class="tile-count">Governance</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="api-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🔌 API Security</h1><p>API discovery, testing, fuzzing, authentication & gateway security</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">API Discovery & Monitoring</div><div class="tool-grid">
+<div class="tool-card"><h3>Metlo</h3><p>API security monitoring and testing platform.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/metlo-labs/metlo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>APIKit</h3><p>API security discovery and monitoring toolkit.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/API-Security/APIKit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">API Security Testing & Fuzzing</div><div class="tool-grid">
+<div class="tool-card"><h3>Cherrybomb</h3><p>CLI tool that tests APIs using OpenAPI/Swagger definitions.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/blst-security/cherrybomb" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Awesome API Security</h3><p>Curated list of API security tools and resources.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/arainho/awesome-api-security" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Authentication & Token Validation</div><div class="tool-grid">
+<div class="tool-card"><h3>OAuth2 Proxy</h3><p>Reverse proxy providing authentication using OAuth2.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/oauth2-proxy/oauth2-proxy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Ory Hydra</h3><p>OAuth 2.0 server and OpenID Connect provider.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/ory/hydra" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Rate Limiting & Abuse Prevention</div><div class="tool-grid">
+<div class="tool-card"><h3>Envoy Proxy</h3><p>Cloud-native high-performance edge and service proxy.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/envoyproxy/envoy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Traefik</h3><p>Modern HTTP reverse proxy and load balancer.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/traefik/traefik" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">API Gateway Security</div><div class="tool-grid">
+<div class="tool-card"><h3>Kong Gateway</h3><p>Cloud-native API gateway with security extensions.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Kong/kong" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>APIcast</h3><p>Open-source API gateway by Red Hat 3scale.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/3scale/APIcast" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="cloud-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>☁️ Cloud Security</h1><p>Cloud workload protection, CSPM, container & serverless security</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Cloud Workload Protection</div><div class="tool-grid">
+<div class="tool-card"><h3>Wazuh</h3><p>Unified SIEM/XDR monitoring cloud workloads on AWS, Azure & GCP.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/wazuh/wazuh" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ThreatMapper</h3><p>Cloud-native workload protection and threat mapping.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/deepfence/ThreatMapper" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Trivy</h3><p>Fast scanner for containers, Kubernetes and IaC.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/aquasecurity/trivy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Container & Kubernetes Security</div><div class="tool-grid">
+<div class="tool-card"><h3>Falco</h3><p>Runtime security monitoring for containers and Kubernetes.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/falcosecurity/falco" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Dockle</h3><p>Container image linter for security best practices.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/goodwithtech/dockle" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Kubernetes Goat</h3><p>Intentionally vulnerable Kubernetes cluster for learning.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/madhuakula/kubernetes-goat" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Cloud Security Posture Management</div><div class="tool-grid">
+<div class="tool-card"><h3>Terrascan</h3><p>Detects security vulnerabilities in Infrastructure as Code.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/tenable/terrascan" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Checkov</h3><p>Static code analysis for IaC security misconfigurations.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/bridgecrewio/checkov" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>CloudQuery</h3><p>Cloud asset inventory and security posture management.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/cloudquery/cloudquery" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">IAM for Cloud</div><div class="tool-grid">
+<div class="tool-card"><h3>ConsoleMe</h3><p>Netflix tool for managing AWS IAM permissions at scale.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Netflix/consoleme" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OPAL</h3><p>Open Policy Administration Layer for real-time auth.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/permitio/opal" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Authentik</h3><p>Modern open-source identity provider for cloud.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/goauthentik/authentik" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+<div id="threat-intelligence" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🧠 Threat Intelligence</h1><p>IOC feeds, malware analysis, threat actor profiling & TTP mapping</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">IOC Feeds & Sharing</div><div class="tool-grid">
+<div class="tool-card"><h3>MISP</h3><p>Malware Information Sharing Platform for IOC management.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/MISP/MISP" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Awesome Threat Intel</h3><p>Community-curated threat intelligence feeds and resources.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/hslatman/awesome-threat-intelligence" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Malware Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>Cuckoo Sandbox</h3><p>Automated malware analysis sandbox.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/cuckoosandbox/cuckoo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>theZoo</h3><p>Malware repository for research and education.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/ytisf/theZoo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Threat Actor Profiling</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenCTI</h3><p>Graph-based threat intelligence platform with STIX/TAXII.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/OpenCTI-Platform/opencti" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ATT&CK Navigator</h3><p>Web-based tool for exploring MITRE ATT&CK techniques.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/mitre/attack-navigator" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Threat Hunting</div><div class="tool-grid">
+<div class="tool-card"><h3>Yeti</h3><p>Open-source threat intelligence platform for tracking actors.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/yeti-platform/yeti" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Sigma</h3><p>Generic SIEM detection rules in vendor-agnostic format.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/SigmaHQ/sigma" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="soar" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>⚙️ SOAR</h1><p>Security orchestration, automation & response — playbooks & case management</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Workflow Automation</div><div class="tool-grid">
+<div class="tool-card"><h3>Shuffle</h3><p>SOAR platform with drag-and-drop no-code playbook builder.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/Shuffle/Shuffle" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>StackStorm</h3><p>Event-driven automation for security workflows.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/StackStorm/st2" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>n8n</h3><p>Visual low-code workflow automation engine.</p><div class="tool-footer"><span class="badge b-other">Sustainable Use</span><a href="https://github.com/n8n-io/n8n" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Playbook Execution & Response</div><div class="tool-grid">
+<div class="tool-card"><h3>IRIS</h3><p>Incident Response Investigation System with case workflows.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/dfir-iris/iris-web" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>MITRE Caldera</h3><p>Automated adversary emulation using MITRE ATT&CK.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/mitre/caldera" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Threat Intelligence Integration</div><div class="tool-grid">
+<div class="tool-card"><h3>Cortex</h3><p>Runs analyzers to enrich alerts — VirusTotal, MISP, Whois.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/TheHive-Project/Cortex" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenCTI</h3><p>Graph-based threat intel platform with STIX/TAXII support.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/OpenCTI-Platform/opencti" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Case Management & Alert Enrichment</div><div class="tool-grid">
+<div class="tool-card"><h3>TheHive</h3><p>Scalable incident response and case management platform.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/TheHive-Project/TheHive" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Shuffle</h3><p>Case enrichment and alert triage automation.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/Shuffle/Shuffle" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="network-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🌐 Network Security</h1><p>Firewalls, IDS/IPS, DNS filtering, VPN, segmentation & packet analysis</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Firewall Management</div><div class="tool-grid">
+<div class="tool-card"><h3>pfSense</h3><p>Full-featured open-source firewall with deep packet inspection.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/pfsense/pfsense" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OPNsense</h3><p>Fork of pfSense with modern UI and plugin ecosystem.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/opnsense/core" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Intrusion Detection & Prevention</div><div class="tool-grid">
+<div class="tool-card"><h3>Snort 3</h3><p>Signature-based IDS/IPS widely used in enterprises.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/snort3/snort3" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Suricata</h3><p>Multi-threaded IDS/IPS with deep packet inspection.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/OISF/suricata" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">DNS Filtering</div><div class="tool-grid">
+<div class="tool-card"><h3>Pi-hole</h3><p>DNS sinkhole that blocks ads and trackers network-wide.</p><div class="tool-footer"><span class="badge b-other">EUPL</span><a href="https://github.com/pi-hole/pi-hole" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>AdGuard Home</h3><p>DNS-based ad and tracker blocker with parental controls.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/AdguardTeam/AdGuardHome" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">VPN Configuration</div><div class="tool-grid">
+<div class="tool-card"><h3>WireGuard</h3><p>Fast, modern VPN protocol with minimal codebase.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/WireGuard/wireguard-go" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Firezone</h3><p>WireGuard-based VPN and firewall platform.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/firezone/firezone" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Packet Analysis & Monitoring</div><div class="tool-grid">
+<div class="tool-card"><h3>Zeek</h3><p>Network traffic analysis and behavioral monitoring.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/zeek/zeek" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Scapy</h3><p>Powerful Python-based packet manipulation tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/secdev/scapy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="identity-access" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>👤 Identity & Access Management</h1><p>IAM, MFA, SSO, PAM, identity federation & user provisioning</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Identity Federation</div><div class="tool-grid">
+<div class="tool-card"><h3>Authentik</h3><p>Modern open-source identity provider.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/goauthentik/authentik" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Keycloak</h3><p>MFA, SSO (SAML, OAuth2, OIDC) and RBAC platform.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/keycloak/keycloak" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Multi-Factor Authentication</div><div class="tool-grid">
+<div class="tool-card"><h3>PrivacyIDEA</h3><p>Multi-factor authentication server for OTP and more.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/privacyidea/privacyidea" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Google Authenticator</h3><p>Time-based OTP authenticator.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/google/google-authenticator" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Privileged Access Management</div><div class="tool-grid">
+<div class="tool-card"><h3>Boundary</h3><p>Secure remote access to infrastructure without VPN.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/hashicorp/boundary" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ConsoleMe</h3><p>Manages AWS IAM permissions for large organizations.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Netflix/consoleme" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Single Sign-On</div><div class="tool-grid">
+<div class="tool-card"><h3>Keycloak</h3><p>Full SSO with SAML, OAuth2 and OpenID Connect.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/keycloak/keycloak" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Gluu Server</h3><p>Enterprise identity platform with SAML and OIDC.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/GluuFederation/gluu-server" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="incident-response" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🚨 Incident Response</h1><p>Incident management, live endpoint response, case management & playbooks</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Incident Management Platforms</div><div class="tool-grid">
+<div class="tool-card"><h3>TheHive</h3><p>Scalable incident response and case management platform.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/TheHive-Project/TheHive" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>FIR</h3><p>Fast Incident Response lightweight incident tracker.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/certsocietegenerale/FIR" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>IRIS</h3><p>Incident Response Investigation System.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/dfir-iris/iris-web" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Live Endpoint Response</div><div class="tool-grid">
+<div class="tool-card"><h3>GRR Rapid Response</h3><p>Remote live forensics across large endpoint fleets.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/google/grr" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Velociraptor</h3><p>Live endpoint interrogation and forensic artifact collection.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Velocidex/velociraptor" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Adversary Emulation</div><div class="tool-grid">
+<div class="tool-card"><h3>Atomic Red Team</h3><p>Attack tests mapped to MITRE ATT&CK framework.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/redcanaryco/atomic-red-team" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>MITRE Caldera</h3><p>Automated adversary emulation using ATT&CK.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/mitre/caldera" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Playbook Automation</div><div class="tool-grid">
+<div class="tool-card"><h3>StackStorm</h3><p>Event-driven automation for security incident workflows.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/StackStorm/st2" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>n8n</h3><p>Visual low-code playbook automation.</p><div class="tool-footer"><span class="badge b-other">Sustainable Use</span><a href="https://github.com/n8n-io/n8n" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+<div id="vulnerability-management" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🛠️ Vulnerability Management</h1><p>Scanning, CVE monitoring, SBOM, dependency analysis & CI/CD integration</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Vulnerability Scanning</div><div class="tool-grid">
+<div class="tool-card"><h3>Trivy</h3><p>Fast scanner for containers, filesystems and IaC.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/aquasecurity/trivy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OSV Scanner</h3><p>Google open-source vulnerability scanner.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/google/osv-scanner" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">CVE Monitoring & Intelligence</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenCVE</h3><p>CVE monitoring and vulnerability intelligence platform.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/opencve/opencve" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Nuclei</h3><p>Fast customizable vulnerability scanner based on templates.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/projectdiscovery/nuclei" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">SBOM & Dependency Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>CycloneDX</h3><p>Software Bill of Materials standard and tooling.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/CycloneDX/cyclonedx-python" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Syft</h3><p>Generates SBOMs from container images and filesystems.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/anchore/syft" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">CI/CD Integration</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP Dependency-Check</h3><p>Detects known vulnerable dependencies in projects.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/jeremylong/DependencyCheck" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ScanCode Toolkit</h3><p>Detects licenses, copyright and dependencies in code.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/nexB/scancode-toolkit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="siem" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>👁️ Security Monitoring / SIEM</h1><p>Log collection, event correlation, threat detection & cloud-native SIEM</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Log Collection & Aggregation</div><div class="tool-grid">
+<div class="tool-card"><h3>Wazuh</h3><p>Unified SIEM/XDR with compliance modules and Kibana dashboards.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/wazuh/wazuh" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Graylog</h3><p>Log management and SIEM with powerful search capabilities.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/Graylog2/graylog2-server" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Matano</h3><p>Open-source cloud-native SIEM on AWS.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/matanolabs/matano" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Event Correlation & Rule Engines</div><div class="tool-grid">
+<div class="tool-card"><h3>Sigma</h3><p>Generic SIEM detection rules in vendor-agnostic format.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/SigmaHQ/sigma" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Tenzir</h3><p>Data pipeline platform for security analytics.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/tenzir/tenzir" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Threat Detection & Alerting</div><div class="tool-grid">
+<div class="tool-card"><h3>RedELK</h3><p>Red team C2 logging and blue team alerting via ELK.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/RedELK/RedELK" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>MozDef</h3><p>Mozilla Defense Platform for real-time event correlation.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/mozilla/MozDef" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Cloud-Native SIEM</div><div class="tool-grid">
+<div class="tool-card"><h3>Matano</h3><p>Serverless security data lake and SIEM on AWS.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/matanolabs/matano" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Sentinel Attack</h3><p>Azure Sentinel threat detection rules.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/netevert/sentinel-attack" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="devsecops" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🔧 DevSecOps</h1><p>SAST, DAST, SCA, secrets detection, IaC security & CI/CD pipeline security</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Static Application Security Testing (SAST)</div><div class="tool-grid">
+<div class="tool-card"><h3>Semgrep</h3><p>Fast customizable static analysis for 30+ languages.</p><div class="tool-footer"><span class="badge b-other">LGPL v2.1</span><a href="https://github.com/returntocorp/semgrep" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Bandit</h3><p>Security linter for Python code.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/PyCQA/bandit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Dynamic Application Security Testing (DAST)</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP ZAP</h3><p>Widely used web application security scanner.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/zaproxy/zaproxy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Wapiti</h3><p>Web application vulnerability scanner.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/wapiti-scanner/wapiti" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Software Composition Analysis (SCA)</div><div class="tool-grid">
+<div class="tool-card"><h3>Trivy</h3><p>Scans containers and filesystems for vulnerable dependencies.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/aquasecurity/trivy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OWASP Dependency-Check</h3><p>Identifies vulnerable dependencies in projects.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/jeremylong/DependencyCheck" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Secrets Detection</div><div class="tool-grid">
+<div class="tool-card"><h3>Gitleaks</h3><p>Detects secrets and credentials in git repositories.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/zricethezav/gitleaks" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Detect Secrets</h3><p>Prevents secrets from being committed to repos.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Yelp/detect-secrets" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">IaC Security</div><div class="tool-grid">
+<div class="tool-card"><h3>Checkov</h3><p>Static analysis for Terraform, CloudFormation and more.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/bridgecrewio/checkov" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>TFLint</h3><p>Terraform linter for security and best practices.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/terraform-linters/tflint" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">CI/CD Pipeline Security</div><div class="tool-grid">
+<div class="tool-card"><h3>SecureCodeBox</h3><p>Kubernetes-native security scans in CI/CD pipelines.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/secureCodeBox/secureCodeBox" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Harden-Runner</h3><p>GitHub Actions security hardening runner.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/step-security/harden-runner" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="endpoint-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>💻 Endpoint Security</h1><p>EDR, system monitoring, file integrity, behavior monitoring & host hardening</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Endpoint Detection & Response</div><div class="tool-grid">
+<div class="tool-card"><h3>Velociraptor</h3><p>Live endpoint interrogation and forensic artifact collection.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Velocidex/velociraptor" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>GRR Rapid Response</h3><p>Remote live forensics across large endpoint fleets.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/google/grr" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">System Monitoring & Threat Hunting</div><div class="tool-grid">
+<div class="tool-card"><h3>Security Onion</h3><p>Full-stack log aggregation and network monitoring distribution.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/Security-Onion-Solutions/securityonion" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Mac Monitor</h3><p>macOS system monitoring for threat hunting.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/redcanaryco/mac-monitor" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">File Integrity & Behavior Monitoring</div><div class="tool-grid">
+<div class="tool-card"><h3>OSSEC</h3><p>Host-based intrusion detection with file integrity monitoring.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/ossec/ossec-hids" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Wazuh</h3><p>Unified XDR/SIEM with file integrity and behavior monitoring.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/wazuh/wazuh" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Endpoint Hardening & Hygiene</div><div class="tool-grid">
+<div class="tool-card"><h3>Pareto Mac</h3><p>macOS security hygiene checker.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/ParetoSecurity/pareto-mac" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Stethoscope</h3><p>Device security policy enforcement tool by Netflix.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/Netflix-Skunkworks/stethoscope-app" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="ai-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🤖 AI Security</h1><p>AI-powered phishing detection, deepfake defense & LLM misuse prevention</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">AI-Powered Phishing Detection</div><div class="tool-grid">
+<div class="tool-card"><h3>GoPhish</h3><p>Open-source phishing simulation and training framework.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/gophish/gophish" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>LangChain</h3><p>LLM orchestration — detect multi-step AI phishing attacks.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/langchain-ai/langchain" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Purple Llama</h3><p>Meta safety evaluation suite for LLMs.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/facebook/purple-llama" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Deepfake Detection</div><div class="tool-grid">
+<div class="tool-card"><h3>DeepFaceLab</h3><p>Deepfake generation tool for fraud drills and detection research.</p><div class="tool-footer"><span class="badge b-other">CC</span><a href="https://github.com/iperov/DeepFaceLab" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>FaceForensics++</h3><p>Benchmark and tools for deepfake detection research.</p><div class="tool-footer"><span class="badge b-other">CC BY-NC-SA</span><a href="https://github.com/ondyari/FaceForensics" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">LLM Misuse Prevention</div><div class="tool-grid">
+<div class="tool-card"><h3>Llama Guard</h3><p>Meta model for detecting unsafe LLM inputs and outputs.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/meta-llama/PurpleLlama" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>CodeShield</h3><p>Insecure code detection for LLM-generated output.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/meta-llama/PurpleLlama" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Voice Cloning Defense</div><div class="tool-grid">
+<div class="tool-card"><h3>Bark</h3><p>Text-to-audio model for voice cloning defense testing.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/suno-ai/bark" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Coqui-TTS</h3><p>Open-source voice cloning and TTS toolkit.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/coqui-ai/TTS" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="blue-teaming" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🛡️ Blue Teaming</h1><p>Threat hunting, network monitoring, forensics, honeypots & system hardening</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Endpoint Visibility & Threat Hunting</div><div class="tool-grid">
+<div class="tool-card"><h3>Velociraptor</h3><p>Live endpoint interrogation and artifact collection.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/Velocidex/velociraptor" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OSQuery</h3><p>SQL-based endpoint visibility and threat hunting.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/osquery/osquery" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Wazuh</h3><p>Unified XDR/SIEM for endpoint threat hunting.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/wazuh/wazuh" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Network Monitoring & Packet Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>Zeek</h3><p>Network traffic analysis and behavioral monitoring.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/zeek/zeek" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Arkime</h3><p>Full packet capture and network session search system.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/arkime/arkime" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Suricata</h3><p>Multi-threaded IDS/IPS with deep packet inspection.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/OISF/suricata" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Honeypots & Deception</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenCanary</h3><p>Multi-protocol network honeypot.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/thinkst/opencanary" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Cowrie</h3><p>SSH/Telnet honeypot for capturing attacker activity.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/cowrie/cowrie" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">System Hardening</div><div class="tool-grid">
+<div class="tool-card"><h3>Linux Baseline</h3><p>InSpec baseline for Linux security hardening.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/dev-sec/linux-baseline" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Windows Baseline</h3><p>InSpec baseline for Windows security hardening.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/dev-sec/windows-baseline" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+<div id="osint" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🕵️ OSINT</h1><p>Domain intelligence, social media analysis, metadata & breach monitoring</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Domain & DNS Intelligence</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP Amass</h3><p>DNS enumeration and external attack surface mapping.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/OWASP/Amass" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Subfinder</h3><p>Fast passive subdomain discovery tool.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/projectdiscovery/subfinder" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Social Media & Profile Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>Sherlock</h3><p>Hunt down social media accounts by username.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/sherlock-project/sherlock" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Email2PhoneNumber</h3><p>OSINT tool to find phone numbers linked to emails.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/martinvigo/email2phonenumber" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Metadata & File Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>ExifTool</h3><p>Read and write metadata in images, audio, video and documents.</p><div class="tool-footer"><span class="badge b-gpl">GPL v1</span><a href="https://github.com/exiftool/exiftool" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>DFIRTrack</h3><p>Digital forensics and incident response tracking tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/dfirtrack/dfirtrack" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Dark Web & Breach Monitoring</div><div class="tool-grid">
+<div class="tool-card"><h3>Maigret</h3><p>Username OSINT with dark web and breach search.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/soxoj/maigret" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>BreachParse</h3><p>Parses breach data for usernames and passwords.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/hmaverickadams/breach-parse" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="digital-forensics" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🔍 Digital Forensics</h1><p>Disk analysis, memory forensics, timeline reconstruction & network forensics</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Disk & File System Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>Autopsy</h3><p>Digital forensics platform for disk imaging and file recovery.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/sleuthkit/autopsy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Sleuth Kit</h3><p>Command-line tools for forensic file system analysis.</p><div class="tool-footer"><span class="badge b-other">CPL</span><a href="https://github.com/sleuthkit/sleuthkit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Memory Forensics</div><div class="tool-grid">
+<div class="tool-card"><h3>Volatility 3</h3><p>Advanced memory forensics framework.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/volatilityfoundation/volatility3" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>MemLabs</h3><p>Educational memory forensic challenges.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/stuxnet999/MemLabs" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Timeline & Event Reconstruction</div><div class="tool-grid">
+<div class="tool-card"><h3>Plaso</h3><p>Creates detailed timelines from system logs and artifacts.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/log2timeline/plaso" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Hayabusa</h3><p>Windows event log fast forensics and threat hunting.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/Yamato-Security/hayabusa" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Mobile Device Forensics</div><div class="tool-grid">
+<div class="tool-card"><h3>IPED</h3><p>Brazilian Federal Police digital investigation tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/sepinf-inc/IPED" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Avilla Forensics</h3><p>Mobile device forensics and extraction tool.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/AvillaDaniel/AvillaForensics" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="red-teaming" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🔴 Red Teaming</h1><p>Adversary simulation, C2 frameworks, payload delivery & privilege escalation</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Adversary Simulation Frameworks</div><div class="tool-grid">
+<div class="tool-card"><h3>MITRE Caldera</h3><p>Automated adversary emulation using MITRE ATT&CK.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/mitre/caldera" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Atomic Red Team</h3><p>Attack tests mapped to MITRE ATT&CK techniques.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/redcanaryco/atomic-red-team" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Command & Control (C2)</div><div class="tool-grid">
+<div class="tool-card"><h3>Sliver</h3><p>Modern adversary simulation framework and C2 server.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/BishopFox/sliver" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Empire</h3><p>PowerShell and Python post-exploitation C2 agent.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/BC-SECURITY/Empire" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Credential Access & Privilege Escalation</div><div class="tool-grid">
+<div class="tool-card"><h3>PowerSploit</h3><p>PowerShell post-exploitation framework.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/PowerShellMafia/PowerSploit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>PrivescCheck</h3><p>Windows privilege escalation checks script.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/itm4n/PrivescCheck" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="grc" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>📜 GRC – Governance, Risk & Compliance</h1><p>Policy management, risk assessment, audit trails & compliance automation</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Audit Management</div><div class="tool-grid">
+<div class="tool-card"><h3>Eramba</h3><p>Open-source GRC with risk registers and compliance management.</p><div class="tool-footer"><span class="badge b-other">CC</span><a href="https://github.com/eramba/eramba" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenGRC</h3><p>Policy creation, risk scoring and compliance tracking.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/OpenGRC/OpenGRC" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Compliance Automation</div><div class="tool-grid">
+<div class="tool-card"><h3>GovReady-Q</h3><p>Generates documentation for SOC 2, ISO 27001 and GDPR.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/GovReady/GovReady-Q" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Awesome Compliance</h3><p>Curated list of open-source compliance tools.</p><div class="tool-footer"><span class="badge b-other">CC0</span><a href="https://github.com/getprobo/awesome-compliance" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Policy Enforcement</div><div class="tool-grid">
+<div class="tool-card"><h3>Open Policy Agent</h3><p>Policy-as-code engine for cloud security rules.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-policy-agent/opa" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OPAL</h3><p>Real-time policy update layer for OPA.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/permitio/opal" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Risk Assessment</div><div class="tool-grid">
+<div class="tool-card"><h3>ArcherySec</h3><p>Aggregates scan results and provides risk dashboards.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/archerysec/archerysec" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>DefectDojo</h3><p>Security orchestration with remediation tracking.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/DefectDojo/django-DefectDojo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="privacy-tools" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🔒 Privacy Tools</h1><p>Data encryption, DLP, privacy management & secure file sharing</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Data Encryption</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenSSL</h3><p>Industry-standard library for TLS/SSL and certificate management.</p><div class="tool-footer"><span class="badge b-other">Apache-style</span><a href="https://github.com/openssl/openssl" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Cryptomator</h3><p>File encryption with access control for cloud storage.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/cryptomator/cryptomator" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Data Loss Prevention</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenDLP</h3><p>Scans data at rest across Windows and Unix systems.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/ezarko/opendlp" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ChatSecure</h3><p>Encrypted chat app for mobile privacy.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/ChatSecure/ChatSecure-iOS" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Privacy Management</div><div class="tool-grid">
+<div class="tool-card"><h3>Databunker</h3><p>GDPR-compliant personal data vault.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/securitybunker/databunker" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenDSR</h3><p>Open Data Subject Request handling framework.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/opengdpr/OpenDSR" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Secure File Sharing</div><div class="tool-grid">
+<div class="tool-card"><h3>Nextcloud</h3><p>Self-hosted file sharing with end-to-end encryption.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/nextcloud/server" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ownCloud</h3><p>Open-source file sync and sharing platform.</p><div class="tool-footer"><span class="badge b-agpl">AGPL v3</span><a href="https://github.com/owncloud/core" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="security-awareness" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🎓 Security Awareness Training</h1><p>Phishing simulations, interactive training & gamified learning</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Phishing Simulation & Education</div><div class="tool-grid">
+<div class="tool-card"><h3>GoPhish</h3><p>Create and send realistic phishing campaigns for training.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/gophish/gophish" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>King Phisher</h3><p>Phishing campaign toolkit for security awareness testing.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/rsmusllp/king-phisher" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Gamified Learning & Quizzes</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP Security Shepherd</h3><p>Hands-on web app security challenges with scoreboards.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/OWASP/SecurityShepherd" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OWASP NodeGoat</h3><p>Vulnerable Node.js app for security training.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/OWASP/NodeGoat" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="security-testing" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🧪 Security Testing</h1><p>Reconnaissance, vulnerability scanning, web app testing & exploit frameworks</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Reconnaissance & Enumeration</div><div class="tool-grid">
+<div class="tool-card"><h3>theHarvester</h3><p>Email, subdomain and name harvesting tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/laramies/theHarvester" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Amass</h3><p>DNS enumeration and attack surface mapping.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/OWASP/Amass" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Web Application Testing</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP ZAP</h3><p>Widely used web application security scanner.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/zaproxy/zaproxy" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>SQLMap</h3><p>Automated SQL injection and database takeover tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/sqlmapproject/sqlmap" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Network & Port Scanning</div><div class="tool-grid">
+<div class="tool-card"><h3>Nmap</h3><p>Gold standard for network discovery and security auditing.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/nmap/nmap" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Vuls</h3><p>Agentless vulnerability scanner for Linux and FreeBSD.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/future-architect/vuls" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Exploit Development & Frameworks</div><div class="tool-grid">
+<div class="tool-card"><h3>Metasploit Framework</h3><p>Industry-standard penetration testing framework.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/rapid7/metasploit-framework" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>BeEF</h3><p>Browser exploitation framework for web app pen testing.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/beefproject/beef" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="web-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🌐 Web Security</h1><p>WAFs, security headers, vulnerability scanners & static code analysis</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Web Application Firewalls</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenAppSec</h3><p>ML-based WAF blocking AI-generated threats.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/openappsec/openappsec" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>BunkerWeb</h3><p>Next-generation WAF and web server security.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/bunkerity/bunkerweb" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>SafeLine</h3><p>Self-hosted WAF to protect web applications.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/chaitin/SafeLine" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Vulnerability Scanners</div><div class="tool-grid">
+<div class="tool-card"><h3>Nikto</h3><p>Web server scanner detecting outdated software and misconfigurations.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/sullo/nikto" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>w3af</h3><p>Web application attack and audit framework.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/andresriancho/w3af" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Static Code Analysis</div><div class="tool-grid">
+<div class="tool-card"><h3>Bandit</h3><p>Security linter for Python code.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/PyCQA/bandit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Semgrep</h3><p>Fast static analysis for multiple programming languages.</p><div class="tool-footer"><span class="badge b-other">LGPL v2.1</span><a href="https://github.com/returntocorp/semgrep" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="sspm" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>📦 SaaS Security Posture Management</h1><p>Multi-SaaS visibility, M365/Google Workspace monitoring & policy-as-code auditing</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Multi-SaaS Visibility & Compliance</div><div class="tool-grid">
+<div class="tool-card"><h3>CloudSploit</h3><p>Cloud security scanning for misconfigurations.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/aquasecurity/cloudsploit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>CloudQuery</h3><p>Cloud asset inventory across 100+ cloud and SaaS sources.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/cloudquery/cloudquery" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">GitHub & Developer SaaS Security</div><div class="tool-grid">
+<div class="tool-card"><h3>SecureRepo</h3><p>Automatically secures GitHub repositories.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/step-security/secure-repo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Harden-Runner</h3><p>Secures GitHub Actions CI/CD pipelines.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/step-security/harden-runner" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Policy-as-Code & SaaS Auditing</div><div class="tool-grid">
+<div class="tool-card"><h3>Open Policy Agent</h3><p>Policy-as-code engine for SaaS access control.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-policy-agent/opa" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Checkov</h3><p>Static analysis for IaC and SaaS configurations.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/bridgecrewio/checkov" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="zero-trust" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🧭 Zero Trust Architecture</h1><p>Identity-aware proxies, network segmentation, policy enforcement & ZTNA tools</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Identity-Aware Access Proxies</div><div class="tool-grid">
+<div class="tool-card"><h3>Pomerium</h3><p>Identity-aware reverse proxy for secure internal app access.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/pomerium/pomerium" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Boundary</h3><p>Secure remote access to infrastructure without VPN.</p><div class="tool-footer"><span class="badge b-other">MPL 2.0</span><a href="https://github.com/hashicorp/boundary" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Zero Trust VPN Alternatives</div><div class="tool-grid">
+<div class="tool-card"><h3>Firezone</h3><p>WireGuard-based zero trust VPN and firewall platform.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/firezone/firezone" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>NetBird</h3><p>Peer-to-peer zero trust VPN alternative.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/netbirdio/netbird" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Policy Enforcement & Authorization</div><div class="tool-grid">
+<div class="tool-card"><h3>Open Policy Agent</h3><p>Policy-as-code engine for zero trust security rules.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-policy-agent/opa" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Cerbos</h3><p>Cloud-native authorization platform.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/cerbos/cerbos" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="mobile-security" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>📱 Mobile Security</h1><p>Mobile app testing, APK analysis, runtime instrumentation & iOS security</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Mobile App Security Testing</div><div class="tool-grid">
+<div class="tool-card"><h3>MobSF</h3><p>Mobile Security Framework for static and dynamic analysis.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/MobSF/Mobile-Security-Framework-MobSF" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OWASP MASTG</h3><p>Mobile Application Security Testing Guide.</p><div class="tool-footer"><span class="badge b-other">CC BY-SA 4.0</span><a href="https://github.com/OWASP/mastg" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">APK Analysis & Reverse Engineering</div><div class="tool-grid">
+<div class="tool-card"><h3>APKLeaks</h3><p>Scanning APK files for secrets and sensitive data.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/dwisiswant0/apkleaks" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Frida Snippets</h3><p>Frida scripts for mobile app runtime instrumentation.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/iddoeldor/frida-snippets" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Mobile Threat Defense & RASP</div><div class="tool-grid">
+<div class="tool-card"><h3>Free RASP Android</h3><p>Runtime application self-protection for Android.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/talsec/Free-RASP-Android" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Awesome Mobile Security</h3><p>Curated list of mobile security tools and resources.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/vaib25vicky/awesome-mobile-security" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="data-governance" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🗂️ Data Governance</h1><p>Metadata management, data lineage, quality & data catalogs</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Metadata Management & Discovery</div><div class="tool-grid">
+<div class="tool-card"><h3>DataHub</h3><p>Open-source metadata platform for data discovery.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/datahub-project/datahub" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenMetadata</h3><p>Unified metadata platform for data governance.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-metadata/OpenMetadata" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Data Quality & Profiling</div><div class="tool-grid">
+<div class="tool-card"><h3>Soda Core</h3><p>Data quality testing and monitoring framework.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/sodadata/soda-core" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Elementary</h3><p>Open-source data observability for dbt projects.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/elementary-data/elementary" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Data Catalogs & Access Control</div><div class="tool-grid">
+<div class="tool-card"><h3>Amundsen</h3><p>Data discovery and metadata platform by Lyft.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/amundsen-io/amundsen" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ODD Platform</h3><p>Open Data Discovery platform with governance views.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/opendatadiscovery/odd-platform" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="security-analytics" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>📊 Security Analytics</h1><p>Log analysis, anomaly detection, ML models & security dashboards</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Log Analysis & Threat Detection</div><div class="tool-grid">
+<div class="tool-card"><h3>Tirreno</h3><p>Real-time fraud and threat detection analytics.</p><div class="tool-footer"><span class="badge b-other">Custom</span><a href="https://github.com/tirreno/tirreno" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Baskerville</h3><p>ML-based anomaly detection for web traffic.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/deflect-ca/baskerville" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Anomaly Detection & ML Models</div><div class="tool-grid">
+<div class="tool-card"><h3>ML Anomaly Detection</h3><p>Machine learning-based anomaly detection for security.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/kaiyoo/ML-Anomaly-Detection" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Malware Detection via ML</h3><p>ML-based malware classification and detection.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/Md-Emon-Hasan/Malware-Detection" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="governance-dashboard" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>📋 Governance Dashboard</h1><p>Security & risk visualization, data governance dashboards & policy templates</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Data Governance Dashboards</div><div class="tool-grid">
+<div class="tool-card"><h3>DataHub</h3><p>Metadata platform with built-in governance dashboards.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/datahub-project/datahub" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenMetadata</h3><p>Unified governance platform with visual dashboards.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-metadata/OpenMetadata" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Governance Models & Policy Templates</div><div class="tool-grid">
+<div class="tool-card"><h3>OpenChain Specification</h3><p>Open compliance specification for open-source governance.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/OpenChain-Project/OpenChain-Specification" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Open Policy Agent</h3><p>Policy-as-code engine for governance enforcement.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/open-policy-agent/opa" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="security-compliance" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>✅ Security Compliance</h1><p>License scanning, dependency compliance, automation & policy enforcement</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">License & Dependency Scanning</div><div class="tool-grid">
+<div class="tool-card"><h3>FOSSology</h3><p>Open-source license compliance scanning tool.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/fossology/fossology" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>ScanCode Toolkit</h3><p>Detects licenses, copyright and dependencies in code.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/nexB/scancode-toolkit" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Compliance Automation & Reporting</div><div class="tool-grid">
+<div class="tool-card"><h3>OSS Review Toolkit</h3><p>Analyzes software dependencies for license compliance.</p><div class="tool-footer"><span class="badge b-apache">Apache 2.0</span><a href="https://github.com/oss-review-toolkit/ort" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>GovReady-Q</h3><p>Automates compliance documentation for SOC 2 and GDPR.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/GovReady/GovReady-Q" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="risk-management" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>⚖️ Risk Management</h1><p>Risk assessment, scoring, vendor risk & compliance frameworks</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Risk Assessment & Scoring</div><div class="tool-grid">
+<div class="tool-card"><h3>Eramba</h3><p>GRC platform with risk registers and scoring models.</p><div class="tool-footer"><span class="badge b-other">CC</span><a href="https://github.com/eramba/eramba" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OpenGRC</h3><p>Policy and risk management with scoring dashboards.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/OpenGRC/OpenGRC" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Risk Reporting & Dashboards</div><div class="tool-grid">
+<div class="tool-card"><h3>ArcherySec</h3><p>Aggregates scan results and provides risk scoring dashboards.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/archerysec/archerysec" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>DefectDojo</h3><p>Security orchestration with remediation tracking.</p><div class="tool-footer"><span class="badge b-other">BSD</span><a href="https://github.com/DefectDojo/django-DefectDojo" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<div id="training-labs" class="page">
+<div class="page-hero"><button class="back-btn" onclick="showHome()">← All Domains</button>
+<h1>🏋️ Cybersecurity Training Labs</h1><p>CTF platforms, security awareness, online labs & learning resources</p></div>
+<div class="section">
+<div class="sub-section"><div class="sub-title">Capture The Flag Platforms</div><div class="tool-grid">
+<div class="tool-card"><h3>CTFd</h3><p>Open-source CTF platform for competitions and training.</p><div class="tool-footer"><span class="badge b-gpl">GPL v3</span><a href="https://github.com/CTFd/CTFd" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>Project02</h3><p>Beginner-friendly CTF platform for learning.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/paralisieth/Project02" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+<div class="sub-section"><div class="sub-title">Vulnerable-by-Design Apps</div><div class="tool-grid">
+<div class="tool-card"><h3>OWASP WebGoat</h3><p>Deliberately insecure web app for security training.</p><div class="tool-footer"><span class="badge b-gpl">GPL v2</span><a href="https://github.com/WebGoat/WebGoat" target="_blank" class="btn-gh">GitHub →</a></div></div>
+<div class="tool-card"><h3>OWASP Juice Shop</h3><p>Modern vulnerable web app for security training.</p><div class="tool-footer"><span class="badge b-mit">MIT</span><a href="https://github.com/juice-shop/juice-shop" target="_blank" class="btn-gh">GitHub →</a></div></div>
+</div></div>
+</div></div>
+
+<footer>
+<p>🔐 The Cybersecurity Hub &mdash; All tools are open-source. Hosted free on GitHub Pages. &nbsp;|&nbsp;
+<a href="https://github.com/The-Cybersecurity-Hub/The-Cybersecurity-Hub" target="_blank">View on GitHub</a></p>
+</footer>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  var el=document.getElementById(id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+}
+function showHome(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('home').classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
